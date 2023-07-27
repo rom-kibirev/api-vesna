@@ -1,0 +1,6 @@
+<IfModule mod_headers.c>
+    SetEnvIf Origin "http://localhost:3000$" AccessControlAllowOrigin=$0
+    Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
