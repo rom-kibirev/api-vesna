@@ -1,118 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import categoryData from './test_category.json';
+import goodsData from './test_goods.json';
 
 const App = () => {
 
-    const [userUrl,setUserUrl] = useState('http://testapi.runtec.rom-kibirev.ru');
-    const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
-    const [message, setMessage] = useState('');
-    const [showButtons, setShowButtons] = useState(false);
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [data, setData] = useState ();
+    const [filename, setFilename] = useState ();
 
-    const apiUrl = 'https://www.runtec-shop.com/api/';
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post(`${apiUrl}`, {
-                username: username,
-                password: password,
-                test: "test"
-            }, {headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/x-www-form-urlencoded'
-            }});
-            setMessage(response.data.message);
-            setShowButtons(response.data.showButtons);
-        } catch (error) {
-            setMessage('Ошибка авторизации');
-            setShowButtons(false);
-        }
-    };
-    const handleGetData = async (command) => {
-        try {
-            const response = await axios.get(`${apiUrl}?command=${command}&url=${userUrl}`, {
-                withCredentials: true, // Включение передачи куки
-                auth: {
-                    username: username,
-                    password: password
-                },
-            });
+    const apiUrl = 'https://runtec-shop.com/api';
 
-            setData(response.data);
+    const postHandler = (type) => {
 
-            console.log(response.data);
-        } catch (error) {
-            console.log('Ошибка при получении данных');
-        }
-    };
-    const handlePostData = (command) => {
-
+        const jsonData = type === 'category' ? categoryData : goodsData;
         const data = {
-            json: [],
-            command: command,
+            username: username,
+            password: password,
+            json: JSON.stringify(jsonData),
+            type: type
+        };
+        const headers= {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/x-www-form-urlencoded'
         };
 
-        const config = {
-            auth: {
-                username: username,
-                password: password,
-            },
-            // withCredentials: true,
-        };
-
-
-        axios.post(`${apiUrl}post.php`, JSON.stringify(data), config)
+        axios.post(`${apiUrl}/index.php`, data, {headers: headers})
             .then(response => {
-                console.log('Ответ от сервера:', response.data);
+                console.log(`\n `, response);
+                setFilename(response.data.filename);
+            })
+            .catch(error => console.log(`\n error`, error))
+    };
+
+    useEffect(() => {
+        if (filename) axios.get(`https://runtec-shop.com/${filename}`)
+            .then(response => {
+                // Записать данные в состояние setData
+                setData(response.data);
             })
             .catch(error => {
-                console.error('Ошибка при отправке запроса:', error);
+                console.error('Произошла ошибка:', error);
+                // Обработка возможных ошибок при выполнении запроса
             });
-    };
-
-    console.log('\n ', userUrl);
+    }, [filename]);
 
     return (
         <div style={{padding: '10px'}}>
-            <h1>Модуль авторизации и отправки запросов</h1>
-            <form onSubmit={handleLogin}>
-                <input
-                    type="text"
-                    placeholder="Имя пользователя"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Пароль"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">Войти</button>
-            </form>
-            <p>{message}</p>
-            {showButtons && (
+            <div>
+                <h2>Отправка запросов</h2>
                 <div>
-                    <h2>GET запросы</h2>
                     <input
                         type="text"
-                        name="userUrl"
-                        value={userUrl}
-                        onChange={(e) => setUserUrl(e.target.value)}
+                        placeholder="Имя пользователя"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
-                    <button onClick={() => handleGetData('goods')}>Данные по товарам</button>
-                    <button onClick={() => handleGetData('category')}>Данные по категориям</button>
-                    <hr />
-
-                    <h2>POST запросы</h2>
-                    <button onClick={() => handlePostData('goods')}>Данные по товарам</button>
-                    <button onClick={() => handlePostData('category')}>Данные по категориям</button>
                 </div>
-            )}
-            {data && data.map((d,i) =>
-                <pre key={i}>{JSON.stringify(d, null, 2)}</pre>
-            )}
+                <div>
+                    <input
+                        type="password"
+                        placeholder="Пароль"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <button onClick={() => postHandler('goods')}>Отправить данные по товарам</button>
+                </div>
+                <div>
+                    <button onClick={() => postHandler('category')}>Отправить данные по категориям</button>
+                </div>
+            </div>
+
+            {data &&
+                <div>
+                    <h2>Данные успешно сохранены</h2>
+                    <a href={`https://runtec-shop.com/${filename}`} target="_blank" rel="noopener noreferrer">Посмотреть файл</a>
+                    {data.map((d, i) => <pre key={i}>{JSON.stringify(d, null, 2)}</pre>)}
+                </div>
+            }
         </div>
     );
 };

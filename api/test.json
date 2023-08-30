@@ -1,0 +1,65 @@
+[
+  {
+    "guid": "7172b2a8-c404-11e5-80fe-002590d99cf6",
+    "vendor_code": "BT-823",
+    "category": "55384c8c-6155-11e7-8117-002590d99cf6",
+    "name": "Сверло по металлу центровочное ф4,0 тип А",
+    "brand": "JSD Tools",
+    "country": "КИТАЙ",
+    "description": "Сверло предназначено для обработки центровых отверстий с углом конуса 60° на сверлильных, центровочных и токарных станках.",
+    "waiting_date": null,
+    "features": [],
+    "equipment": [],
+    "parameters": [
+      {
+        "name": "weight",
+        "value": 0.09,
+        "unit": "кг"
+      },
+      {
+        "name": "volume",
+        "value": 0.00011,
+        "unit": "м3"
+      },
+      {
+        "name": "length",
+        "value": 70,
+        "unit": "мм"
+      },
+      {
+        "name": "width",
+        "value": 40,
+        "unit": "мм"
+      },
+      {
+        "name": "height",
+        "value": 40,
+        "unit": "мм"
+      }
+    ],
+    "additional_parameters": [
+      {
+        "name": "Материал",
+        "value": "HSS",
+        "unit": null
+      },
+      {
+        "name": "Тип сверла",
+        "value": "Центровочное",
+        "unit": null
+      },
+      {
+        "name": "L - Длина общая",
+        "value": "59",
+        "unit": "мм"
+      },
+      {
+        "name": "Диаметр",
+        "value": "4",
+        "unit": "мм"
+      }
+    ],
+    "analogues": [],
+    "related": []
+  }
+]
